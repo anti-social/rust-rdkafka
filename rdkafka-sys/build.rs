@@ -238,7 +238,8 @@ fn build_librdkafka() {
         config.define("WITH_ZLIB", "1");
         config.register_dep("z");
         if let Ok(z_root) = env::var("DEP_Z_ROOT") {
-            cmake_library_paths.push(format!("{}/lib", z_root));
+            config.define("ZLIB_LIBRARY", format!("{}/include/lib/libz.a", z_root));
+            config.define("ZLIB_INCLUDE_DIR", format!("{}/include", z_root));
         }
     } else {
         config.define("WITH_ZLIB", "0");
@@ -302,6 +303,10 @@ fn build_librdkafka() {
     if env::var("CARGO_FEATURE_ZSTD").is_ok() {
         config.define("WITH_ZSTD", "1");
         config.register_dep("zstd");
+        if let Ok(zstd_root) = env::var("DEP_ZSTD_ROOT") {
+            config.define("ZSTD_LIBRARY_RELEASE", format!("{}/libzstd.a", zstd_root));
+            config.define("ZSTD_INCLUDE_DIR", format!("{}/include", zstd_root));
+        }
     } else {
         config.define("WITH_ZSTD", "0");
     }
